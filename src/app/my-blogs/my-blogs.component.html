@@ -1,0 +1,14 @@
+
+
+<div class="app" *ngIf="blogs.length">
+              
+    <div class="item" *ngFor="let blog of blogs" [routerLink]="['/blog', blog.Id]" >
+        <img src="https://jonathan-blogs33-bucket.s3.amazonaws.com/"+.Image{{bloUrl}} alt={{blog.Heading}}>
+        <h1>{{blog.Heading}}</h1>
+        
+    </div>
+  
+  </div>
+  <div *ngIf="!blogs.length">
+  <p><i> No Blogs found!!</i></p>
+  </div> 

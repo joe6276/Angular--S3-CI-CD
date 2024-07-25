@@ -1,0 +1,23 @@
+
+name: S3 Actions
+description: This is Where all the S3 Work will be at
+inputs:
+  bucket: 
+    description: " This will be the Name of the S# Bucket"
+    required: true
+
+  bucket-region:
+    description: ' The S# region'
+    required: false
+    default: 'us-east-1'
+
+  dist-files:
+    description: " The Files to upload to the S#, Index.html ,compressed JS Files and CSS"
+    required: true
+  
+outputs:
+  website-url:
+    description: ' The site URL'
+runs:
+  using: "node16"
+  main: 'main.js'

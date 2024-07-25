@@ -1,0 +1,76 @@
+name: Deploy this Angular App to an S3
+on: push
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get The Code First
+              uses: actions/checkout@v4
+           
+            - name: Cache Dependencies
+              id: cache
+              uses: actions/cache@v3
+              with:
+                path: node_modules
+                key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+            
+            - name: Install Dependencies
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: npm ci
+    build:
+        needs:  test 
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get The Code First
+              uses: actions/checkout@v4
+           
+            - name: Cache Dependencies
+              id: cache
+              uses: actions/cache@v3
+              with:
+                path: node_modules
+                key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+            
+            - name: Install Dependencies
+              if: steps.cache.outputs.cache-hit != 'true'
+              run: npm ci
+
+            - name: Build Website
+              run:  npm run build
+            
+            - name: Upload artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: dist-files
+                path: dist/blogsapp/browser
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Get The Code
+              uses: actions/checkout@v4
+
+            - name: Get Build artifacts
+              uses: actions/download-artifact@v3
+              with:
+                name: dist-files
+                path: ./dist/blogsapp/browser
+
+            - name: Output content
+              run: ls
+
+            - name: Upload to an S3 Bucket
+              id: deploy
+              uses: ./.github/actions/js
+              env:
+                AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+                AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+              with:
+                bucket: ${{secrets.BUCKET_NAME}}
+                dist-files: ./dist/blogsapp/browser
+                bucket-region: us-east-1
+
+            - name: Done !! Here is the Live link
+              run: |
+                echo "Live URL: ${{steps.deploy.outputs.website-url  }}"
+
