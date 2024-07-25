@@ -1,7 +1,7 @@
 
 # How to Build an Angular Pipeline that Deploys to a S3 Service IN AWS
 
-![screenshot](ng.jpg)
+![screenshot](ng.png)
 
 # WorkFlow:
 
